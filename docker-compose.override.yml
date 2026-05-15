@@ -1,4 +1,7 @@
 services:
+  finansas:
+    build: .
+
   finansas-db:
     ports:
       - "5432:5432"
