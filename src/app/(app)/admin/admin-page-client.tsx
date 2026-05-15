@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
+import { Checkbox } from '@/components/ui/checkbox'
 import {
   Dialog,
   DialogContent,
@@ -20,7 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { Checkbox } from '@/components/ui/checkbox'
+import { useLocale } from '@/hooks/use-locale'
 
 type User = {
   id: string
@@ -46,17 +47,19 @@ type Props = {
 export function AdminPageClient({ household, users, profiles, currentUserId }: Props) {
   const router = useRouter()
   const [, startTransition] = useTransition()
+  const { t } = useLocale()
+  const m = t('admin')
 
   const refresh = () => startTransition(() => router.refresh())
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-semibold">Admin</h1>
+      <h1 className="text-2xl font-semibold">{m.title}</h1>
       <Tabs defaultValue="users">
         <TabsList>
-          <TabsTrigger value="users">Users</TabsTrigger>
-          <TabsTrigger value="profiles">Profiles</TabsTrigger>
-          <TabsTrigger value="household">Household</TabsTrigger>
+          <TabsTrigger value="users">{m.users}</TabsTrigger>
+          <TabsTrigger value="profiles">{m.profiles}</TabsTrigger>
+          <TabsTrigger value="household">{m.household}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="users" className="space-y-4 pt-4">
@@ -88,9 +91,11 @@ function UsersTab({
 }) {
   const [open, setOpen] = useState(false)
   const [resetTarget, setResetTarget] = useState<User | null>(null)
+  const { t } = useLocale()
+  const m = t('admin')
 
   async function handleDelete(id: string) {
-    if (!confirm('Delete this user and all their data?')) return
+    if (!confirm(m.confirmDeleteUser)) return
     await fetch(`/api/admin/users/${id}`, { method: 'DELETE' })
     onMutate()
   }
@@ -98,12 +103,12 @@ function UsersTab({
   return (
     <>
       <div className="flex items-center justify-between">
-        <span className="text-sm text-muted-foreground">{users.length} users</span>
+        <span className="text-sm text-muted-foreground">{m.usersCount(users.length)}</span>
         <Dialog open={open} onOpenChange={setOpen}>
-          <Button size="sm" onClick={() => setOpen(true)}>New user</Button>
+          <Button size="sm" onClick={() => setOpen(true)}>{m.newUser}</Button>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Create user</DialogTitle>
+              <DialogTitle>{m.createUser}</DialogTitle>
             </DialogHeader>
             <CreateUserForm
               onSuccess={() => {
@@ -121,24 +126,16 @@ function UsersTab({
             <div className="flex items-center gap-2">
               <span className="font-medium">{u.username}</span>
               {u.name && <span className="text-sm text-muted-foreground">{u.name}</span>}
-              {u.isAdmin && <Badge variant="secondary">admin</Badge>}
-              {u.id === currentUserId && <Badge variant="outline">you</Badge>}
+              {u.isAdmin && <Badge variant="secondary">{m.adminBadge}</Badge>}
+              {u.id === currentUserId && <Badge variant="outline">{m.youBadge}</Badge>}
             </div>
             <div className="flex gap-2">
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={() => setResetTarget(u)}
-              >
-                Reset password
+              <Button size="sm" variant="outline" onClick={() => setResetTarget(u)}>
+                {m.resetPassword}
               </Button>
               {u.id !== currentUserId && (
-                <Button
-                  size="sm"
-                  variant="destructive"
-                  onClick={() => handleDelete(u.id)}
-                >
-                  Delete
+                <Button size="sm" variant="destructive" onClick={() => handleDelete(u.id)}>
+                  {t('common').delete}
                 </Button>
               )}
             </div>
@@ -149,7 +146,7 @@ function UsersTab({
       <Dialog open={!!resetTarget} onOpenChange={(o) => !o && setResetTarget(null)}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Reset password — {resetTarget?.username}</DialogTitle>
+            <DialogTitle>{m.resetPassword} — {resetTarget?.username}</DialogTitle>
           </DialogHeader>
           {resetTarget && (
             <ResetPasswordForm
@@ -170,6 +167,9 @@ function CreateUserForm({ onSuccess }: { onSuccess: () => void }) {
   const [error, setError] = useState('')
   const [isAdmin, setIsAdmin] = useState(false)
   const [pending, startTransition] = useTransition()
+  const { t } = useLocale()
+  const m = t('admin')
+  const c = t('common')
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -190,7 +190,7 @@ function CreateUserForm({ onSuccess }: { onSuccess: () => void }) {
         onSuccess()
       } else {
         const data = await res.json()
-        setError(data.error?.toString() ?? 'Error creating user')
+        setError(data.error?.toString() ?? c.error)
       }
     })
   }
@@ -198,15 +198,15 @@ function CreateUserForm({ onSuccess }: { onSuccess: () => void }) {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="space-y-1">
-        <Label htmlFor="cu-username">Username</Label>
+        <Label htmlFor="cu-username">{m.username}</Label>
         <Input id="cu-username" name="username" required minLength={3} />
       </div>
       <div className="space-y-1">
-        <Label htmlFor="cu-name">Display name (optional)</Label>
+        <Label htmlFor="cu-name">{m.displayNameOptional}</Label>
         <Input id="cu-name" name="name" />
       </div>
       <div className="space-y-1">
-        <Label htmlFor="cu-password">Password</Label>
+        <Label htmlFor="cu-password">{m.password}</Label>
         <Input id="cu-password" name="password" type="password" required minLength={8} />
       </div>
       <div className="flex items-center gap-2">
@@ -215,11 +215,11 @@ function CreateUserForm({ onSuccess }: { onSuccess: () => void }) {
           checked={isAdmin}
           onCheckedChange={(v) => setIsAdmin(v === true)}
         />
-        <Label htmlFor="cu-isAdmin">Admin</Label>
+        <Label htmlFor="cu-isAdmin">{m.isAdmin}</Label>
       </div>
       {error && <p className="text-sm text-destructive">{error}</p>}
       <Button type="submit" className="w-full" disabled={pending}>
-        {pending ? 'Creating…' : 'Create user'}
+        {pending ? c.creating : m.createUser}
       </Button>
     </form>
   )
@@ -228,6 +228,9 @@ function CreateUserForm({ onSuccess }: { onSuccess: () => void }) {
 function ResetPasswordForm({ userId, onSuccess }: { userId: string; onSuccess: () => void }) {
   const [error, setError] = useState('')
   const [pending, startTransition] = useTransition()
+  const { t } = useLocale()
+  const m = t('admin')
+  const c = t('common')
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -241,7 +244,7 @@ function ResetPasswordForm({ userId, onSuccess }: { userId: string; onSuccess: (
       if (res.ok) {
         onSuccess()
       } else {
-        setError('Failed to reset password')
+        setError(c.error)
       }
     })
   }
@@ -249,12 +252,12 @@ function ResetPasswordForm({ userId, onSuccess }: { userId: string; onSuccess: (
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="space-y-1">
-        <Label htmlFor="rp-password">New password</Label>
+        <Label htmlFor="rp-password">{m.newPassword}</Label>
         <Input id="rp-password" name="password" type="password" required minLength={8} />
       </div>
       {error && <p className="text-sm text-destructive">{error}</p>}
       <Button type="submit" className="w-full" disabled={pending}>
-        {pending ? 'Saving…' : 'Reset password'}
+        {pending ? c.saving : m.resetPassword}
       </Button>
     </form>
   )
@@ -272,9 +275,12 @@ function ProfilesTab({
   onMutate: () => void
 }) {
   const [open, setOpen] = useState(false)
+  const { t } = useLocale()
+  const m = t('admin')
+  const c = t('common')
 
   async function handleDelete(id: string) {
-    if (!confirm('Delete this profile and all its data?')) return
+    if (!confirm(m.confirmDeleteProfile)) return
     await fetch(`/api/admin/profiles/${id}`, { method: 'DELETE' })
     onMutate()
   }
@@ -282,12 +288,12 @@ function ProfilesTab({
   return (
     <>
       <div className="flex items-center justify-between">
-        <span className="text-sm text-muted-foreground">{profiles.length} profiles</span>
+        <span className="text-sm text-muted-foreground">{m.profilesCount(profiles.length)}</span>
         <Dialog open={open} onOpenChange={setOpen}>
-          <Button size="sm" onClick={() => setOpen(true)}>New profile</Button>
+          <Button size="sm" onClick={() => setOpen(true)}>{m.newProfile}</Button>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Create profile</DialogTitle>
+              <DialogTitle>{m.createProfile}</DialogTitle>
             </DialogHeader>
             <CreateProfileForm
               users={users}
@@ -308,7 +314,7 @@ function ProfilesTab({
               <span className="ml-2 text-sm text-muted-foreground">@{p.user.username}</span>
             </div>
             <Button size="sm" variant="destructive" onClick={() => handleDelete(p.id)}>
-              Delete
+              {c.delete}
             </Button>
           </li>
         ))}
@@ -327,6 +333,9 @@ function CreateProfileForm({
   const [error, setError] = useState('')
   const [pending, startTransition] = useTransition()
   const [userId, setUserId] = useState('')
+  const { t } = useLocale()
+  const m = t('admin')
+  const c = t('common')
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -341,7 +350,7 @@ function CreateProfileForm({
         onSuccess()
       } else {
         const data = await res.json()
-        setError(data.error?.toString() ?? 'Error creating profile')
+        setError(data.error?.toString() ?? c.error)
       }
     })
   }
@@ -349,14 +358,14 @@ function CreateProfileForm({
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="space-y-1">
-        <Label htmlFor="cp-displayName">Display name</Label>
+        <Label htmlFor="cp-displayName">{m.displayName}</Label>
         <Input id="cp-displayName" name="displayName" required />
       </div>
       <div className="space-y-1">
-        <Label id="cp-user-label" htmlFor="cp-user-trigger">User</Label>
+        <Label id="cp-user-label" htmlFor="cp-user-trigger">{m.user}</Label>
         <Select value={userId} onValueChange={(v) => setUserId(v ?? '')} required>
           <SelectTrigger id="cp-user-trigger" aria-labelledby="cp-user-label">
-            <SelectValue placeholder="Select user…" />
+            <SelectValue placeholder={m.selectUser} />
           </SelectTrigger>
           <SelectContent>
             {users.map((u) => (
@@ -369,7 +378,7 @@ function CreateProfileForm({
       </div>
       {error && <p className="text-sm text-destructive">{error}</p>}
       <Button type="submit" className="w-full" disabled={pending || !userId}>
-        {pending ? 'Creating…' : 'Create profile'}
+        {pending ? c.creating : m.createProfile}
       </Button>
     </form>
   )
@@ -387,6 +396,9 @@ function HouseholdTab({
   const [name, setName] = useState(household.name)
   const [error, setError] = useState('')
   const [pending, startTransition] = useTransition()
+  const { t } = useLocale()
+  const m = t('admin')
+  const c = t('common')
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -399,7 +411,7 @@ function HouseholdTab({
       if (res.ok) {
         onMutate()
       } else {
-        setError('Failed to save')
+        setError(c.error)
       }
     })
   }
@@ -407,7 +419,7 @@ function HouseholdTab({
   return (
     <form onSubmit={handleSubmit} className="max-w-sm space-y-4">
       <div className="space-y-1">
-        <Label htmlFor="hh-name">Household name</Label>
+        <Label htmlFor="hh-name">{m.householdName}</Label>
         <Input
           id="hh-name"
           value={name}
@@ -419,7 +431,7 @@ function HouseholdTab({
       </div>
       {error && <p className="text-sm text-destructive">{error}</p>}
       <Button type="submit" disabled={pending}>
-        {pending ? 'Saving…' : 'Save'}
+        {pending ? c.saving : c.save}
       </Button>
     </form>
   )

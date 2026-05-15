@@ -5,12 +5,15 @@ import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { useLocale } from '@/hooks/use-locale'
 
 export function SetupPageClient() {
   const router = useRouter()
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  const { t } = useLocale()
+  const m = t('setup')
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -21,7 +24,7 @@ export function SetupPageClient() {
     const confirmPassword = form.get('confirmPassword') as string
 
     if (password !== confirmPassword) {
-      setError('Passwords do not match')
+      setError(m.passwordMismatch)
       return
     }
 
@@ -44,7 +47,7 @@ export function SetupPageClient() {
     }
     if (!res.ok) {
       const data = await res.json()
-      setError(data?.error?.formErrors?.[0] ?? 'Invalid input')
+      setError(data?.error?.formErrors?.[0] ?? t('common').error)
       return
     }
 
@@ -55,21 +58,20 @@ export function SetupPageClient() {
     <div className="flex min-h-screen items-center justify-center p-4">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle>Welcome to finansas</CardTitle>
-          <CardDescription>Set up your household to get started.</CardDescription>
+          <CardTitle>finansas</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-1">
-              <Label htmlFor="householdName">Household name</Label>
+              <Label htmlFor="householdName">{m.householdName}</Label>
               <Input id="householdName" name="householdName" placeholder="e.g. Our Home" required />
             </div>
             <div className="space-y-1">
-              <Label htmlFor="adminName">Your name</Label>
+              <Label htmlFor="adminName">{m.adminName}</Label>
               <Input id="adminName" name="adminName" placeholder="e.g. Jean" required />
             </div>
             <div className="space-y-1">
-              <Label htmlFor="username">Username</Label>
+              <Label htmlFor="username">{m.username}</Label>
               <Input
                 id="username"
                 name="username"
@@ -80,16 +82,16 @@ export function SetupPageClient() {
               />
             </div>
             <div className="space-y-1">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">{m.password}</Label>
               <Input id="password" name="password" type="password" minLength={8} required />
             </div>
             <div className="space-y-1">
-              <Label htmlFor="confirmPassword">Confirm password</Label>
+              <Label htmlFor="confirmPassword">{m.confirmPassword}</Label>
               <Input id="confirmPassword" name="confirmPassword" type="password" minLength={8} required />
             </div>
-            {error && <p className="text-sm text-red-500">{error}</p>}
+            {error && <p className="text-sm text-destructive">{error}</p>}
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? 'Creating…' : 'Create household'}
+              {loading ? t('common').creating : m.submit}
             </Button>
           </form>
         </CardContent>
