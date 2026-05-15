@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { requireAdmin } from '@/lib/auth-guard'
 import { prisma } from '@/lib/db'
 import { CreateProfileSchema } from '@/lib/schemas'
+import { getDefaultCategories } from '@/lib/default-categories'
 
 export async function GET() {
   return requireAdmin(async () => {
@@ -10,6 +11,7 @@ export async function GET() {
         id: true,
         displayName: true,
         avatar: true,
+        color: true,
         createdAt: true,
         user: { select: { id: true, username: true, name: true } },
       },
@@ -26,7 +28,7 @@ export async function POST(req: Request) {
     if (!result.success) {
       return NextResponse.json({ error: result.error.flatten() }, { status: 400 })
     }
-    const { displayName, userId, avatar } = result.data
+    const { displayName, userId, avatar, color } = result.data
 
     const household = await prisma.household.findFirst()
     if (!household) {
@@ -34,15 +36,21 @@ export async function POST(req: Request) {
     }
 
     const profile = await prisma.profile.create({
-      data: { displayName, userId, avatar, householdId: household.id },
+      data: { displayName, userId, avatar: avatar ?? '', color: color ?? '#6366f1', householdId: household.id },
       select: {
         id: true,
         displayName: true,
         avatar: true,
+        color: true,
         createdAt: true,
         user: { select: { id: true, username: true, name: true } },
       },
     })
+
+    await prisma.category.createMany({
+      data: getDefaultCategories().map((c) => ({ ...c, profileId: profile.id })),
+    })
+
     return NextResponse.json(profile, { status: 201 })
   })
 }

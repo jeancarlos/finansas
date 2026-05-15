@@ -48,6 +48,8 @@ const messages = {
     usernameTaken: 'Nome de usuário já está em uso',
     youBadge: 'você',
     adminBadge: 'admin',
+    avatar: 'Avatar',
+    color: 'Cor',
   },
   setup: {
     title: 'Configuração',
@@ -65,6 +67,27 @@ const messages = {
     password: 'Senha',
     submit: 'Entrar',
     invalid: 'Nome de usuário ou senha inválidos',
+  },
+  categories: {
+    title: 'Categorias',
+    expenses: 'Despesas',
+    income: 'Receitas',
+    newCategory: 'Nova categoria',
+    name: 'Nome',
+    icon: 'Ícone',
+    color: 'Cor',
+    noCategories: 'Nenhuma categoria ainda',
+    confirmDelete: 'Excluir esta categoria?',
+    nameTaken: 'Já existe uma categoria com este nome',
+    selectCategory: 'Selecione uma categoria',
+    searchCategory: 'Buscar categoria…',
+    noResults: 'Nenhuma categoria encontrada.',
+  },
+  fab: {
+    newTransaction: 'Nova transação',
+    newCategory: 'Nova categoria',
+    newRecurring: 'Novo recorrente',
+    newGoal: 'Nova meta',
   },
 } satisfies Messages
 

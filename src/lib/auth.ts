@@ -30,9 +30,12 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         token.isAdmin = (user as { isAdmin: boolean }).isAdmin
         const profile = await prisma.profile.findFirst({
           where: { userId: token.sub! },
+          select: { id: true, householdId: true, color: true, avatar: true },
         })
         token.profileId = profile?.id ?? null
         token.householdId = profile?.householdId ?? null
+        token.profileColor = profile?.color ?? '#6366f1'
+        token.profileAvatar = profile?.avatar ?? ''
       }
       return token
     },
@@ -41,6 +44,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       session.user.profileId = (token.profileId as string | null) ?? null
       session.user.householdId = (token.householdId as string | null) ?? null
       session.user.isAdmin = (token.isAdmin as boolean) ?? false
+      session.user.profileColor = (token.profileColor as string) ?? '#6366f1'
+      session.user.profileAvatar = (token.profileAvatar as string) ?? ''
       return session
     },
   },

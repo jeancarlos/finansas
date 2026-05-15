@@ -46,6 +46,8 @@ const messages = {
     usernameTaken: 'Username already taken',
     youBadge: 'you',
     adminBadge: 'admin',
+    avatar: 'Avatar',
+    color: 'Color',
   },
   setup: {
     title: 'Setup',
@@ -63,6 +65,27 @@ const messages = {
     password: 'Password',
     submit: 'Sign in',
     invalid: 'Invalid username or password',
+  },
+  categories: {
+    title: 'Categories',
+    expenses: 'Expenses',
+    income: 'Income',
+    newCategory: 'New category',
+    name: 'Name',
+    icon: 'Icon',
+    color: 'Color',
+    noCategories: 'No categories yet',
+    confirmDelete: 'Delete this category?',
+    nameTaken: 'A category with this name already exists',
+    selectCategory: 'Select a category',
+    searchCategory: 'Search category…',
+    noResults: 'No categories found.',
+  },
+  fab: {
+    newTransaction: 'New transaction',
+    newCategory: 'New category',
+    newRecurring: 'New recurring',
+    newGoal: 'New goal',
   },
 } as const
 

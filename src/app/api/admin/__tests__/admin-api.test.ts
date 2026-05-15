@@ -21,6 +21,9 @@ vi.mock('@/lib/db', () => ({
       findFirst: vi.fn(),
       update: vi.fn(),
     },
+    category: {
+      createMany: vi.fn().mockResolvedValue({ count: 0 }),
+    },
   },
 }))
 vi.mock('bcryptjs', () => ({ default: { hash: vi.fn().mockResolvedValue('hashed') } }))

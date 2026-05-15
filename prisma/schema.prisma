@@ -27,7 +27,8 @@ model Household {
 model Profile {
   id          String   @id @default(cuid())
   displayName String
-  avatar      String?
+  avatar      String   @default("")
+  color       String   @default("#6366f1")
   createdAt   DateTime @default(now())
   userId      String
   householdId String
@@ -55,7 +56,7 @@ model Category {
   profile      Profile       @relation(fields: [profileId], references: [id], onDelete: Cascade)
   transactions Transaction[]
 
-  @@unique([name, profileId])
+  @@unique([name, type, profileId])
 }
 
 model Transaction {

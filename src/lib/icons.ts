@@ -1,0 +1,52 @@
+import {
+  Home,
+  UtensilsCrossed,
+  ShoppingCart,
+  Car,
+  Gamepad2,
+  Heart,
+  GraduationCap,
+  CreditCard,
+  Shirt,
+  PawPrint,
+  Gift,
+  Plane,
+  Receipt,
+  MoreHorizontal,
+  Banknote,
+  Laptop,
+  TrendingUp,
+  Target,
+  Wallet,
+  Sparkles,
+  Circle,
+  type LucideIcon,
+} from 'lucide-react'
+
+const iconMap: Record<string, LucideIcon> = {
+  Home,
+  UtensilsCrossed,
+  ShoppingCart,
+  Car,
+  Gamepad2,
+  Heart,
+  GraduationCap,
+  CreditCard,
+  Shirt,
+  PawPrint,
+  Gift,
+  Plane,
+  Receipt,
+  MoreHorizontal,
+  Banknote,
+  Laptop,
+  TrendingUp,
+  Target,
+  Wallet,
+  Sparkles,
+  Circle,
+}
+
+export function getLucideIcon(name: string): LucideIcon {
+  return iconMap[name] ?? MoreHorizontal // eslint-disable-line security/detect-object-injection
+}

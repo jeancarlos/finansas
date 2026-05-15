@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useTransition } from 'react'
+import { PROFILE_COLORS, DEFAULT_PROFILE_COLOR } from '@/lib/profile-colors'
 import { useRouter } from 'next/navigation'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
@@ -33,7 +34,8 @@ type User = {
 type Profile = {
   id: string
   displayName: string
-  avatar: string | null
+  avatar: string
+  color: string
   user: { id: string; username: string; name: string | null }
 }
 
@@ -309,9 +311,17 @@ function ProfilesTab({
       <ul className="space-y-2">
         {profiles.map((p) => (
           <li key={p.id} className="flex items-center justify-between rounded-lg border p-3">
-            <div>
-              <span className="font-medium">{p.displayName}</span>
-              <span className="ml-2 text-sm text-muted-foreground">@{p.user.username}</span>
+            <div className="flex items-center gap-3">
+              <div
+                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-semibold text-white"
+                style={{ backgroundColor: p.color }}
+              >
+                {p.avatar || p.displayName[0].toUpperCase()}
+              </div>
+              <div>
+                <span className="font-medium">{p.displayName}</span>
+                <span className="ml-2 text-sm text-muted-foreground">@{p.user.username}</span>
+              </div>
             </div>
             <Button size="sm" variant="destructive" onClick={() => handleDelete(p.id)}>
               {c.delete}
@@ -333,6 +343,7 @@ function CreateProfileForm({
   const [error, setError] = useState('')
   const [pending, startTransition] = useTransition()
   const [userId, setUserId] = useState('')
+  const [color, setColor] = useState<string>(DEFAULT_PROFILE_COLOR)
   const { t } = useLocale()
   const m = t('admin')
   const c = t('common')
@@ -344,7 +355,12 @@ function CreateProfileForm({
       const res = await fetch('/api/admin/profiles', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ displayName: fd.get('displayName'), userId }),
+        body: JSON.stringify({
+          displayName: fd.get('displayName'),
+          avatar: fd.get('avatar') || '',
+          color,
+          userId,
+        }),
       })
       if (res.ok) {
         onSuccess()
@@ -360,6 +376,35 @@ function CreateProfileForm({
       <div className="space-y-1">
         <Label htmlFor="cp-displayName">{m.displayName}</Label>
         <Input id="cp-displayName" name="displayName" required />
+      </div>
+      <div className="space-y-1">
+        <Label htmlFor="cp-avatar">{m.avatar}</Label>
+        <Input
+          id="cp-avatar"
+          name="avatar"
+          placeholder="😀"
+          maxLength={4}
+          className="w-24 text-center text-xl"
+        />
+      </div>
+      <div className="space-y-1">
+        <Label>{m.color}</Label>
+        <div className="flex flex-wrap gap-2">
+          {PROFILE_COLORS.map((c) => (
+            <button
+              key={c}
+              type="button"
+              onClick={() => setColor(c)}
+              className="h-7 w-7 rounded-full transition-transform hover:scale-110"
+              style={{
+                backgroundColor: c,
+                outline: color === c ? `3px solid ${c}` : undefined,
+                outlineOffset: color === c ? '2px' : undefined,
+              }}
+              aria-label={c}
+            />
+          ))}
+        </div>
       </div>
       <div className="space-y-1">
         <Label id="cp-user-label" htmlFor="cp-user-trigger">{m.user}</Label>

@@ -12,10 +12,11 @@
 - [x] shadcn/ui
 
 ## Features (each requires doc review before implementation)
-- [ ] Auth (credentials, setup flow, session)
-- [ ] Admin panel (household + user management)
-- [ ] i18n (locale formatters + translations)
-- [ ] Categories
+- [x] Auth (credentials, setup flow, session)
+- [x] Admin panel (household + user management)
+- [x] i18n (locale formatters + translations)
+- [x] Layout / shell (glass nav pill, gradient bg, GlassCard, Money, icons)
+- [x] Categories
 - [ ] Transactions
 - [ ] Recurring rules
 - [ ] Goals
