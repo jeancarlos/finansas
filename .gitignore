@@ -46,3 +46,6 @@ next-env.d.ts
 src/generated/
 node_modules/
 .env.local
+
+# Internal AI planning files (not for public repo)
+docs/superpowers/
