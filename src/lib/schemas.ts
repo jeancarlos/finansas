@@ -36,3 +36,28 @@ export const CreateProfileSchema = z.object({
 export const HouseholdNameSchema = z.object({
   name: z.string().min(1).max(100),
 })
+
+export const CreateTransactionSchema = z.object({
+  type: z.enum(['INCOME', 'EXPENSE']),
+  amount: z.number().positive(),
+  description: z.string().max(200).optional(),
+  categoryId: z.string().min(1),
+  date: z
+    .string()
+    .transform((s) => new Date(s))
+    .refine((d) => !isNaN(d.getTime()), { message: 'Invalid date' }),
+  originProfileId: z.string().optional(),
+  isRecurring: z.boolean().default(false),
+})
+
+export const UpdateTransactionSchema = z.object({
+  amount: z.number().positive().optional(),
+  description: z.string().max(200).nullable().optional(),
+  categoryId: z.string().min(1).optional(),
+  date: z
+    .string()
+    .transform((s) => new Date(s))
+    .refine((d) => !isNaN(d.getTime()), { message: 'Invalid date' })
+    .optional(),
+  originProfileId: z.string().nullable().optional(),
+})

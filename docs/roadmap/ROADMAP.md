@@ -17,7 +17,7 @@
 - [x] i18n (locale formatters + translations)
 - [x] Layout / shell (glass nav pill, gradient bg, GlassCard, Money, icons)
 - [x] Categories
-- [ ] Transactions
+- [x] Transactions
 - [ ] Recurring rules
 - [ ] Goals
 - [ ] Projections

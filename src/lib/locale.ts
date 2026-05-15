@@ -56,3 +56,11 @@ export function formatDate(date: Date | string): string {
 export function formatDateOnly(date: Date | string): string {
   return new Intl.DateTimeFormat(locale.lang, dateFormatOptions()).format(toDate(date))
 }
+
+export function parseAmount(masked: string): number {
+  if (!masked) return 0
+  if (locale.lang === 'pt-BR') {
+    return parseFloat(masked.replace(/\./g, '').replace(',', '.')) || 0
+  }
+  return parseFloat(masked.replace(/,/g, '')) || 0
+}

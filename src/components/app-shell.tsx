@@ -2,10 +2,11 @@
 
 import { BottomNav } from './bottom-nav'
 import { ContextualFab } from './contextual-fab'
+import { QuickAdd } from './quick-add'
 import { useProfile } from '@/hooks/use-profile'
 
 export function AppShell({ children }: { children: React.ReactNode }) {
-  const { profileColor } = useProfile()
+  const { profileColor, profileId } = useProfile()
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 pb-28">
       {/* Top gradient — subtle fade from status bar into page content */}
@@ -47,6 +48,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <BottomNav accentColor={profileColor} />
         <ContextualFab accentColor={profileColor} />
       </div>
+      {profileId && <QuickAdd profileId={profileId} accentColor={profileColor} />}
     </div>
   )
 }
