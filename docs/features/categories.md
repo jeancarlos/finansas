@@ -125,19 +125,23 @@ Requires auth. Verifies the category belongs to `session.profileId` before delet
 
 ---
 
-## Profile creation seeding
+## Profile Creation Seeding
 
-`POST /api/admin/profiles` (existing route) is modified to call `seedCategories(profileId)` after the profile is created:
+`POST /api/admin/profiles` (existing route) is modified to call `seedCategories(profileId)` after the profile is created, wrapped in a transaction to prevent partial states:
 
 ```ts
-await prisma.category.createMany({
-  data: getDefaultCategories().map(c => ({ ...c, profileId }))
+const profile = await prisma.$transaction(async (tx) => {
+  const p = await tx.profile.create({ ... })
+  await tx.category.createMany({
+    data: getDefaultCategories().map(c => ({ ...c, profileId: p.id }))
+  })
+  return p
 })
 ```
 
 ---
 
-## UI — `/categories` page
+## UI — `/categories` Page
 
 Two tabs: **Expenses** | **Income**. Each tab shows:
 - List of existing categories (colored icon, name, delete button)
@@ -149,7 +153,7 @@ Icon and color fields are optional — defaults to `'Circle'` icon and `'#6b7280
 
 ---
 
-## i18n additions
+## i18n Additions
 
 ```ts
 // messages/en.ts additions

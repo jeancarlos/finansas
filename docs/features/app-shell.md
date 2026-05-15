@@ -157,7 +157,7 @@ Mask examples:
 
 ---
 
-## Safe-area insets
+## Safe-Area Insets
 
 `AppShell` uses `env(safe-area-inset-*)` for padding on all sides so content is never clipped by device notches or home indicators. Requires `viewportFit: 'cover'` in the root layout viewport export.
 

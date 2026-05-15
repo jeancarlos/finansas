@@ -8,7 +8,7 @@
 
 ## Overview
 
-The admin panel is accessible only to users with `isAdmin: true` in their session. It allows managing users (create, reset password, delete), profiles (create, delete), and the household name. There is a single household in finansas — all operations use `prisma.household.findFirst()`.
+The admin panel is accessible only to users with `isAdmin: true` in their session. It allows managing users (create, reset password, delete), profiles (create, delete), and the household name. There is a single household in Finansas — all operations use `prisma.household.findFirst()`.
 
 ---
 
@@ -28,7 +28,7 @@ The admin panel is accessible only to users with `isAdmin: true` in their sessio
 
 ---
 
-## Auth guard
+## Auth Guard
 
 All API routes use `requireAdmin(session => handler(session))`. The helper in `src/lib/auth.ts` returns 401 if no session, 403 if not admin. The server component also redirects to `/` if not admin.
 
@@ -114,7 +114,7 @@ All forms use `useTransition` + `router.refresh()` for optimistic-free server sy
 
 ---
 
-## i18n keys
+## i18n Keys
 
 All strings come from `t('admin')`. See `src/lib/messages/en.ts` for the full key list.
 
