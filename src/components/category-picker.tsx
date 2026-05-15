@@ -44,7 +44,6 @@ export function CategoryPicker({ categories, value, onChange, className }: Categ
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger>
         <div
-          role="button"
           className={cn(
             'flex w-full items-center gap-2 rounded-xl bg-slate-50 px-4 py-2.5 text-left text-sm transition-colors hover:bg-slate-100',
             !selected && 'text-slate-400',

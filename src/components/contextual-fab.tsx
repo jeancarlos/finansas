@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { usePathname } from 'next/navigation'
 import { motion, AnimatePresence, useAnimationControls } from 'framer-motion'
 import { Plus, Receipt, Target, Repeat, Tag, type LucideIcon } from 'lucide-react'
@@ -19,20 +19,20 @@ export function ContextualFab({ accentColor = DEFAULT_ACCENT }: { accentColor?: 
   const { t } = useLocale()
   const m = t('fab')
 
-  const routeMap: Record<string, RouteConfig> = {
+  const routeMap = useMemo<Record<string, RouteConfig>>(() => ({
     '/': { icon: Receipt, tooltip: m.newTransaction, event: 'fab-add-transaction' },
     '/transactions': { icon: Receipt, tooltip: m.newTransaction, event: 'fab-add-transaction' },
     '/categories': { icon: Tag, tooltip: m.newCategory, event: 'fab-add-category' },
     '/recurring': { icon: Repeat, tooltip: m.newRecurring, event: 'fab-add-recurring' },
     '/goals': { icon: Target, tooltip: m.newGoal, event: 'fab-add-goal' },
-  }
+  }), [m])
 
-  const config: RouteConfig | null = (() => {
+  const config: RouteConfig | null = useMemo(() => {
     for (const [route, cfg] of Object.entries(routeMap)) {
       if (route === '/' ? pathname === '/' : pathname.startsWith(route)) return cfg
     }
     return null
-  })()
+  }, [routeMap, pathname])
 
   const [showTooltip, setShowTooltip] = useState(false)
   const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null)

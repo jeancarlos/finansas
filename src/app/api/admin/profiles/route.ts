@@ -35,20 +35,22 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'No household found' }, { status: 500 })
     }
 
-    const profile = await prisma.profile.create({
-      data: { displayName, userId, avatar: avatar ?? '', color: color ?? '#6366f1', householdId: household.id },
-      select: {
-        id: true,
-        displayName: true,
-        avatar: true,
-        color: true,
-        createdAt: true,
-        user: { select: { id: true, username: true, name: true } },
-      },
-    })
-
-    await prisma.category.createMany({
-      data: getDefaultCategories().map((c) => ({ ...c, profileId: profile.id })),
+    const profile = await prisma.$transaction(async (tx) => {
+      const p = await tx.profile.create({
+        data: { displayName, userId, avatar: avatar ?? '', color: color ?? '#6366f1', householdId: household.id },
+        select: {
+          id: true,
+          displayName: true,
+          avatar: true,
+          color: true,
+          createdAt: true,
+          user: { select: { id: true, username: true, name: true } },
+        },
+      })
+      await tx.category.createMany({
+        data: getDefaultCategories().map((c) => ({ ...c, profileId: p.id })),
+      })
+      return p
     })
 
     return NextResponse.json(profile, { status: 201 })

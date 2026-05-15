@@ -42,8 +42,8 @@ export function CategoriesPageClient({ categories: initial }: Props) {
 
   const refresh = () => startTransition(() => router.refresh())
 
-  const expenses = initial.filter((c) => c.type === 'EXPENSE')
-  const income = initial.filter((c) => c.type === 'INCOME')
+  const expenses = initial.filter((cat) => cat.type === 'EXPENSE')
+  const income = initial.filter((cat) => cat.type === 'INCOME')
 
   async function handleDelete(id: string) {
     if (!confirm(m.confirmDelete)) return
