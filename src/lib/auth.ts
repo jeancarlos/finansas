@@ -2,8 +2,10 @@ import NextAuth from 'next-auth'
 import Credentials from 'next-auth/providers/credentials'
 import bcrypt from 'bcryptjs'
 import { prisma } from '@/lib/db'
+import { authConfig } from './auth.config'
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
+  ...authConfig,
   providers: [
     Credentials({
       credentials: {
@@ -22,8 +24,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       },
     }),
   ],
-  session: { strategy: 'jwt' },
-  pages: { signIn: '/login' },
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
@@ -39,14 +39,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       }
       return token
     },
-    session({ session, token }) {
-      session.user.id = token.sub!
-      session.user.profileId = (token.profileId as string | null) ?? null
-      session.user.householdId = (token.householdId as string | null) ?? null
-      session.user.isAdmin = (token.isAdmin as boolean) ?? false
-      session.user.profileColor = (token.profileColor as string) ?? '#6366f1'
-      session.user.profileAvatar = (token.profileAvatar as string) ?? ''
-      return session
-    },
+    session: authConfig.callbacks!.session,
   },
 })
