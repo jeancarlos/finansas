@@ -1,0 +1,127 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id           String    @id @default(cuid())
+  username     String    @unique
+  passwordHash String
+  name         String?
+  isAdmin      Boolean   @default(false)
+  createdAt    DateTime  @default(now())
+  profiles     Profile[]
+}
+
+model Household {
+  id        String    @id @default(cuid())
+  name      String
+  createdAt DateTime  @default(now())
+  profiles  Profile[]
+}
+
+model Profile {
+  id          String   @id @default(cuid())
+  displayName String
+  avatar      String?
+  createdAt   DateTime @default(now())
+  userId      String
+  householdId String
+
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  household Household @relation(fields: [householdId], references: [id], onDelete: Cascade)
+
+  transactions         Transaction[]
+  categories           Category[]
+  recurringRules       RecurringRule[]
+  goals                Goal[]
+  paymentConfirmations PaymentConfirmation[]
+  tempFiles            TempFile[]
+}
+
+model Category {
+  id        String   @id @default(cuid())
+  name      String
+  icon      String?
+  color     String?
+  type      String
+  profileId String
+  createdAt DateTime @default(now())
+
+  profile      Profile       @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  transactions Transaction[]
+
+  @@unique([name, profileId])
+}
+
+model Transaction {
+  id          String   @id @default(cuid())
+  amount      Decimal  @db.Decimal(12, 2)
+  description String?
+  date        DateTime
+  type        String
+  profileId   String
+  categoryId  String
+  recurringId String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  profile              Profile               @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  category             Category              @relation(fields: [categoryId], references: [id])
+  recurringRule        RecurringRule?        @relation(fields: [recurringId], references: [id], onDelete: SetNull)
+  paymentConfirmations PaymentConfirmation[]
+}
+
+model RecurringRule {
+  id                  String   @id @default(cuid())
+  profileId           String
+  templateDescription String?
+  templateAmount      Decimal? @db.Decimal(12, 2)
+  templateCategoryId  String?
+  frequency           String
+  dayOfMonth          Int?
+  nextDueDate         DateTime
+  active              Boolean  @default(true)
+  createdAt           DateTime @default(now())
+
+  profile      Profile       @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  transactions Transaction[]
+}
+
+model Goal {
+  id            String    @id @default(cuid())
+  profileId     String
+  name          String
+  targetAmount  Decimal   @db.Decimal(12, 2)
+  currentAmount Decimal   @db.Decimal(12, 2) @default(0)
+  deadline      DateTime?
+  createdAt     DateTime  @default(now())
+
+  profile Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+}
+
+model PaymentConfirmation {
+  id            String   @id @default(cuid())
+  profileId     String
+  transactionId String?
+  filePath      String
+  mimeType      String
+  createdAt     DateTime @default(now())
+
+  profile     Profile      @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  transaction Transaction? @relation(fields: [transactionId], references: [id], onDelete: SetNull)
+}
+
+model TempFile {
+  id        String   @id @default(cuid())
+  profileId String
+  filePath  String
+  mimeType  String
+  createdAt DateTime @default(now())
+
+  profile Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+}
