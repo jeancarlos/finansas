@@ -3,26 +3,30 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { NextResponse } from 'next/server'
 
 vi.mock('@/lib/auth', () => ({ auth: vi.fn() }))
-vi.mock('@/lib/db', () => ({
-  prisma: {
-    user: {
-      findMany: vi.fn(),
-      findUnique: vi.fn(),
-      create: vi.fn(),
-      update: vi.fn(),
-      delete: vi.fn(),
+vi.mock('@/lib/db', () => {
+  const profile = { findMany: vi.fn(), create: vi.fn(), delete: vi.fn() }
+  const category = { createMany: vi.fn().mockResolvedValue({ count: 0 }) }
+  return {
+    prisma: {
+      user: {
+        findMany: vi.fn(),
+        findUnique: vi.fn(),
+        create: vi.fn(),
+        update: vi.fn(),
+        delete: vi.fn(),
+      },
+      profile,
+      household: {
+        findFirst: vi.fn(),
+        update: vi.fn(),
+      },
+      category,
+      $transaction: vi.fn().mockImplementation((cb: (tx: unknown) => unknown) =>
+        cb({ profile, category }),
+      ),
     },
-    profile: {
-      findMany: vi.fn(),
-      create: vi.fn(),
-      delete: vi.fn(),
-    },
-    household: {
-      findFirst: vi.fn(),
-      update: vi.fn(),
-    },
-  },
-}))
+  }
+})
 vi.mock('bcryptjs', () => ({ default: { hash: vi.fn().mockResolvedValue('hashed') } }))
 
 import { auth } from '@/lib/auth'

@@ -23,6 +23,7 @@ export default async function AdminPage() {
         id: true,
         displayName: true,
         avatar: true,
+        color: true,
         createdAt: true,
         user: { select: { id: true, username: true, name: true } },
       },

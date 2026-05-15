@@ -7,6 +7,8 @@ declare module 'next-auth' {
       profileId: string | null
       householdId: string | null
       isAdmin: boolean
+      profileColor: string
+      profileAvatar: string
     }
   }
 }

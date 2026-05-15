@@ -8,7 +8,7 @@
 
 ## Overview
 
-finansas uses credentials-only authentication: username + bcrypt-hashed password. No OAuth, no email verification, no external identity providers.
+Finansas uses credentials-only authentication: username + bcrypt-hashed password. No OAuth, no email verification, no external identity providers.
 
 Auth is built on NextAuth v5 with JWT session strategy. There is no `PrismaAdapter` — the schema has no `Account`, `Session`, or `VerificationToken` tables.
 
@@ -139,6 +139,6 @@ Import path: `'@/generated/prisma/client'` (Prisma 7 — no `index.ts`).
 
 ## Reference
 
-- `~/financas/src/auth.ts` — original implementation (Google OAuth + credentials dev-only). finansas drops Google entirely and enables credentials in all environments.
+- `~/financas/src/auth.ts` — original implementation (Google OAuth + credentials dev-only). Finansas drops Google entirely and enables credentials in all environments.
 - `~/financas/src/middleware.ts` — same pattern, simplified for single-household.
 - NextAuth v5 docs: `https://authjs.dev`

@@ -29,7 +29,8 @@ export const ResetPasswordSchema = z.object({
 export const CreateProfileSchema = z.object({
   displayName: z.string().min(1).max(100),
   userId: z.string().cuid(),
-  avatar: z.string().optional(),
+  avatar: z.string().max(4).optional(),
+  color: z.string().regex(/^#[0-9a-fA-F]{6}$/).optional(),
 })
 
 export const HouseholdNameSchema = z.object({
