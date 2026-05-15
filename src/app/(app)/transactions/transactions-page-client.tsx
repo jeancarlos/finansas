@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback, useTransition, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useInitialAnimation } from '@/hooks/use-initial-animation'
 import { ChevronLeft, ChevronRight, Receipt, Trash2, MoreHorizontal, Pencil, ArrowUpRight, ArrowDownRight } from 'lucide-react'
 import { format, addMonths, subMonths, parseISO, startOfMonth, endOfMonth } from 'date-fns'
 import { useLocale } from '@/hooks/use-locale'
@@ -37,6 +38,7 @@ export function TransactionsPageClient({
 }: {
   initialTransactions: Transaction[]
 }) {
+  const shouldAnimate = useInitialAnimation()
   const router = useRouter()
   const [, startTransition] = useTransition()
   const { t } = useLocale()
@@ -124,7 +126,7 @@ export function TransactionsPageClient({
     <motion.div
       className="space-y-4"
       variants={stagger}
-      initial="hidden"
+      initial={shouldAnimate ? 'hidden' : false}
       animate="show"
     >
       {/* Month navigation */}

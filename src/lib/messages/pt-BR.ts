@@ -1,6 +1,10 @@
 import type { Messages } from './en'
 
 const messages = {
+  brand: {
+    name: 'Finänsas',
+    subtitle: 'Finanças Compartilhadas',
+  },
   nav: {
     home: 'Início',
     transactions: 'Transações',
@@ -54,8 +58,11 @@ const messages = {
   setup: {
     title: 'Configuração',
     householdName: 'Nome da residência',
+    householdNamePlaceholder: 'e.g. Nossa Casa',
     adminName: 'Seu nome',
+    adminNamePlaceholder: 'e.g. Fulano de Tal',
     username: 'Nome de usuário',
+    usernamePlaceholder: 'e.g. fulano-de-tal',
     password: 'Senha',
     confirmPassword: 'Confirmar senha',
     submit: 'Criar residência',
@@ -112,6 +119,17 @@ const messages = {
     confirmDelete: 'Excluir esta transação?',
     individual: 'Meu',
     household: 'Residência',
+  },
+  home: {
+    balance: 'Saldo do mês',
+    income: 'Receitas',
+    expense: 'Despesas',
+    goals: 'Metas',
+    recentTransactions: 'Últimas transações',
+    noTransactions: 'Nenhuma transação ainda',
+    tapToAdd: 'Toque no + para começar',
+    projections: 'Projeções futuras',
+    projectionsSubtitle: 'Veja para onde suas finanças estão indo',
   },
 } satisfies Messages
 

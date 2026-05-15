@@ -1,4 +1,8 @@
 const messages = {
+  brand: {
+    name: 'Finänsas',
+    subtitle: 'Shared finances',
+  },
   nav: {
     home: 'Home',
     transactions: 'Transactions',
@@ -52,8 +56,11 @@ const messages = {
   setup: {
     title: 'Setup',
     householdName: 'Household name',
+    householdNamePlaceholder: 'e.g. Our Home',
     adminName: 'Your name',
+    adminNamePlaceholder: 'e.g. Jhon Doe',
     username: 'Username',
+    usernamePlaceholder: 'e.g. jhon-doe',
     password: 'Password',
     confirmPassword: 'Confirm password',
     submit: 'Create household',
@@ -111,6 +118,17 @@ const messages = {
     individual: 'Mine',
     household: 'Household',
   },
+  home: {
+    balance: 'Monthly balance',
+    income: 'Income',
+    expense: 'Expenses',
+    goals: 'Goals',
+    recentTransactions: 'Recent transactions',
+    noTransactions: 'No transactions yet',
+    tapToAdd: 'Tap + to get started',
+    projections: 'Future projections',
+    projectionsSubtitle: 'See where your finances are headed',
+  },
 } as const
 
 export default messages
@@ -118,10 +136,10 @@ export default messages
 // Recursively replace string literals with string, keeping function signatures intact.
 type Loosen<T> = {
   [K in keyof T]: T[K] extends (...args: infer A) => string
-    ? (...args: A) => string
-    : T[K] extends string
-    ? string
-    : Loosen<T[K]>
+  ? (...args: A) => string
+  : T[K] extends string
+  ? string
+  : Loosen<T[K]>
 }
 
 export type Messages = Loosen<typeof messages>
