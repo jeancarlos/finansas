@@ -20,6 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { Checkbox } from '@/components/ui/checkbox'
 
 type User = {
   id: string
@@ -167,6 +168,7 @@ function UsersTab({
 
 function CreateUserForm({ onSuccess }: { onSuccess: () => void }) {
   const [error, setError] = useState('')
+  const [isAdmin, setIsAdmin] = useState(false)
   const [pending, startTransition] = useTransition()
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -176,7 +178,7 @@ function CreateUserForm({ onSuccess }: { onSuccess: () => void }) {
       username: fd.get('username'),
       name: fd.get('name') || undefined,
       password: fd.get('password'),
-      isAdmin: fd.get('isAdmin') === 'on',
+      isAdmin,
     }
     startTransition(async () => {
       const res = await fetch('/api/admin/users', {
@@ -208,7 +210,11 @@ function CreateUserForm({ onSuccess }: { onSuccess: () => void }) {
         <Input id="cu-password" name="password" type="password" required minLength={8} />
       </div>
       <div className="flex items-center gap-2">
-        <input type="checkbox" id="cu-isAdmin" name="isAdmin" />
+        <Checkbox
+          id="cu-isAdmin"
+          checked={isAdmin}
+          onCheckedChange={(v) => setIsAdmin(v === true)}
+        />
         <Label htmlFor="cu-isAdmin">Admin</Label>
       </div>
       {error && <p className="text-sm text-destructive">{error}</p>}
@@ -347,9 +353,9 @@ function CreateProfileForm({
         <Input id="cp-displayName" name="displayName" required />
       </div>
       <div className="space-y-1">
-        <Label>User</Label>
+        <Label id="cp-user-label" htmlFor="cp-user-trigger">User</Label>
         <Select value={userId} onValueChange={(v) => setUserId(v ?? '')} required>
-          <SelectTrigger>
+          <SelectTrigger id="cp-user-trigger" aria-labelledby="cp-user-label">
             <SelectValue placeholder="Select user…" />
           </SelectTrigger>
           <SelectContent>
