@@ -12,5 +12,5 @@ if [ ! -f "$SECRET_FILE" ]; then
 fi
 export NEXTAUTH_SECRET=$(cat "$SECRET_FILE")
 
-npx prisma migrate deploy
+yarn prisma migrate deploy
 exec node server.js

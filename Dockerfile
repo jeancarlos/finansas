@@ -1,15 +1,15 @@
 FROM node:22-alpine AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
-COPY package.json package-lock.json ./
-RUN npm ci
+COPY package.json yarn.lock ./
+RUN yarn install --frozen-lockfile
 
 FROM node:22-alpine AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-RUN npx prisma generate
-RUN npm run build
+RUN yarn prisma generate
+RUN yarn build
 
 FROM node:22-alpine AS runner
 WORKDIR /app
@@ -40,7 +40,7 @@ COPY --from=builder --chown=nextjs:nodejs /app/package.json ./package.json
 # Install only what's needed for migrations at runtime
 # Remove stubs created by Next.js standalone tracing first
 RUN rm -rf node_modules/pg node_modules/@prisma/adapter-pg \
-    && npm install --no-save prisma@7.8.0 @prisma/client@7.8.0 @prisma/adapter-pg@7.8.0 pg tsx dotenv \
+    && yarn add prisma@7.8.0 @prisma/client@7.8.0 @prisma/adapter-pg@7.8.0 pg tsx dotenv \
     && chown -R nextjs:nodejs /app/node_modules
 
 COPY --chown=nextjs:nodejs entrypoint.sh ./
