@@ -4,22 +4,25 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { Home, ArrowLeftRight, RefreshCw, Target, TrendingUp, Settings } from 'lucide-react'
 import { useProfile } from '@/hooks/use-profile'
+import { useLocale } from '@/hooks/use-locale'
 import { cn } from '@/lib/utils'
-
-const NAV_ITEMS = [
-  { href: '/', icon: Home, label: 'Home' },
-  { href: '/transactions', icon: ArrowLeftRight, label: 'Transactions' },
-  { href: '/recurring', icon: RefreshCw, label: 'Recurring' },
-  { href: '/goals', icon: Target, label: 'Goals' },
-  { href: '/projections', icon: TrendingUp, label: 'Projections' },
-]
 
 export function BottomNav() {
   const pathname = usePathname()
   const { isAdmin } = useProfile()
+  const { t } = useLocale()
+  const nav = t('nav')
+
+  const NAV_ITEMS = [
+    { href: '/', icon: Home, label: nav.home },
+    { href: '/transactions', icon: ArrowLeftRight, label: nav.transactions },
+    { href: '/recurring', icon: RefreshCw, label: nav.recurring },
+    { href: '/goals', icon: Target, label: nav.goals },
+    { href: '/projections', icon: TrendingUp, label: nav.projections },
+  ]
 
   const items = isAdmin
-    ? [...NAV_ITEMS, { href: '/admin', icon: Settings, label: 'Admin' }]
+    ? [...NAV_ITEMS, { href: '/admin', icon: Settings, label: nav.admin }]
     : NAV_ITEMS
 
   return (
