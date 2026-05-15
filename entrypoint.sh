@@ -8,6 +8,7 @@ mkdir -p /data/config /data/uploads
 SECRET_FILE=/data/config/secret
 if [ ! -f "$SECRET_FILE" ]; then
   openssl rand -base64 32 > "$SECRET_FILE"
+  chmod 600 "$SECRET_FILE"
 fi
 export NEXTAUTH_SECRET=$(cat "$SECRET_FILE")
 

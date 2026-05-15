@@ -8,8 +8,10 @@ export default auth(async function proxy(req) {
   const { pathname } = req.nextUrl
   const session = req.auth
 
-  const check = await fetch(new URL('/api/setup', req.url))
-  const { setupComplete } = await check.json()
+  const origin = process.env.NEXTAUTH_URL ?? `${req.nextUrl.protocol}//${req.nextUrl.host}`
+  const check = await fetch(new URL('/api/setup', origin))
+  const body = await check.json().catch(() => ({}))
+  const setupComplete = body?.setupComplete === true
 
   if (!setupComplete) {
     if (pathname.startsWith('/setup')) return NextResponse.next()
