@@ -2,9 +2,8 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Home, ArrowLeftRight, RefreshCw, Target, TrendingUp, Settings } from 'lucide-react'
+import { Home, ArrowLeftRight, RefreshCw, Target, TrendingUp, UserCircle } from 'lucide-react'
 import { motion } from 'framer-motion'
-import { useProfile } from '@/hooks/use-profile'
 import { useLocale } from '@/hooks/use-locale'
 import { cn } from '@/lib/utils'
 
@@ -12,21 +11,17 @@ const DEFAULT_ACCENT = '#6366f1'
 
 export function BottomNav({ accentColor = DEFAULT_ACCENT }: { accentColor?: string }) {
   const pathname = usePathname()
-  const { isAdmin } = useProfile()
   const { t } = useLocale()
   const nav = t('nav')
 
-  const NAV_ITEMS = [
+  const items = [
     { href: '/', icon: Home, label: nav.home },
     { href: '/transactions', icon: ArrowLeftRight, label: nav.transactions },
     { href: '/recurring', icon: RefreshCw, label: nav.recurring },
     { href: '/goals', icon: Target, label: nav.goals },
     { href: '/projections', icon: TrendingUp, label: nav.projections },
+    { href: '/user', icon: UserCircle, label: nav.user },
   ]
-
-  const items = isAdmin
-    ? [...NAV_ITEMS, { href: '/admin', icon: Settings, label: nav.admin }]
-    : NAV_ITEMS
 
   return (
     <div

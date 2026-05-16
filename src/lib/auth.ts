@@ -25,9 +25,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     }),
   ],
   callbacks: {
-    async jwt({ token, user }) {
-      if (user) {
-        token.isAdmin = (user as { isAdmin: boolean }).isAdmin
+    async jwt({ token, user, trigger }) {
+      if (user || trigger === 'update') {
+        if (user) token.isAdmin = (user as { isAdmin: boolean }).isAdmin
         const profile = await prisma.profile.findFirst({
           where: { userId: token.sub! },
           select: { id: true, householdId: true, color: true, avatar: true },

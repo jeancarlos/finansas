@@ -1,6 +1,10 @@
 import type { Messages } from './en'
 
 const messages = {
+  brand: {
+    name: 'Finänsas',
+    subtitle: 'Finanças Compartilhadas',
+  },
   nav: {
     home: 'Início',
     transactions: 'Transações',
@@ -8,6 +12,7 @@ const messages = {
     goals: 'Metas',
     projections: 'Projeções',
     admin: 'Admin',
+    user: 'Perfil',
   },
   common: {
     save: 'Salvar',
@@ -20,6 +25,7 @@ const messages = {
     creating: 'Criando…',
     error: 'Algo deu errado',
     accessDenied: 'Acesso negado',
+    comingSoon: 'Em breve',
   },
   admin: {
     title: 'Admin',
@@ -54,8 +60,11 @@ const messages = {
   setup: {
     title: 'Configuração',
     householdName: 'Nome da residência',
+    householdNamePlaceholder: 'e.g. Nossa Casa',
     adminName: 'Seu nome',
+    adminNamePlaceholder: 'e.g. Fulano de Tal',
     username: 'Nome de usuário',
+    usernamePlaceholder: 'e.g. fulano-de-tal',
     password: 'Senha',
     confirmPassword: 'Confirmar senha',
     submit: 'Criar residência',
@@ -112,6 +121,33 @@ const messages = {
     confirmDelete: 'Excluir esta transação?',
     individual: 'Meu',
     household: 'Residência',
+  },
+  user: {
+    household: 'Residência',
+    manageHousehold: 'Gerenciar residência',
+    security: 'Segurança',
+    changePassword: 'Trocar senha',
+    currentPassword: 'Senha atual',
+    newPassword: 'Nova senha',
+    passwordTooShort: 'A senha precisa ter pelo menos 8 caracteres',
+    wrongPassword: 'Senha atual incorreta',
+    account: 'Conta',
+    signOut: 'Sair da conta',
+    deleteAccount: 'Apagar conta',
+    deleteConfirm: 'Todos os seus dados serão permanentemente excluídos: transações, metas e categorias. Esta ação não pode ser desfeita.',
+    editAvatar: 'Escolher avatar',
+    profileColor: 'Cor do perfil',
+  },
+  home: {
+    balance: 'Saldo do mês',
+    income: 'Receitas',
+    expense: 'Despesas',
+    goals: 'Metas',
+    recentTransactions: 'Últimas transações',
+    noTransactions: 'Nenhuma transação ainda',
+    tapToAdd: 'Toque no + para começar',
+    projections: 'Projeções futuras',
+    projectionsSubtitle: 'Veja para onde suas finanças estão indo',
   },
 } satisfies Messages
 

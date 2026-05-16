@@ -8,11 +8,19 @@ export default auth(async function proxy(req) {
   const { pathname } = req.nextUrl
   const session = req.auth
 
+  const origin = process.env.NEXTAUTH_URL ?? `${req.nextUrl.protocol}//${req.nextUrl.host}`
+  const check = await fetch(new URL('/api/setup', origin))
+  const body = await check.json().catch(() => ({}))
+  const setupComplete = body?.setupComplete === true
+
+  if (!setupComplete) {
+    if (pathname.startsWith('/setup')) return NextResponse.next()
+    return NextResponse.redirect(new URL('/setup', req.url))
+  }
+
+  // Setup is complete from here on
   if (pathname.startsWith('/setup')) {
-    const check = await fetch(new URL('/api/setup', req.url))
-    const { setupComplete } = await check.json()
-    if (setupComplete) return NextResponse.redirect(new URL('/', req.url))
-    return NextResponse.next()
+    return NextResponse.redirect(new URL('/', req.url))
   }
 
   if (pathname.startsWith('/login')) {
@@ -28,5 +36,5 @@ export default auth(async function proxy(req) {
 })
 
 export const config = {
-  matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
+  matcher: ['/((?!api|_next/static|_next/image|favicon.ico|images).*)'],
 }

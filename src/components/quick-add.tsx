@@ -232,6 +232,7 @@ export function QuickAdd({ profileId, accentColor }: QuickAddProps) {
 
                 {/* Amount */}
                 <div className="mb-4 flex items-baseline gap-1">
+                  <span className="font-brand text-2xl font-light text-slate-400">R$</span>
                   <CurrencyInput
                     placeholder="0"
                     value={amount}
@@ -344,6 +345,17 @@ export function QuickAdd({ profileId, accentColor }: QuickAddProps) {
             {/* Step 2: Details */}
             {step === 2 && (
               <div className="space-y-4">
+                {/* Amount summary */}
+                <div className="mb-2 flex items-baseline gap-1">
+                  <span className="font-brand text-lg font-light text-slate-400">R$</span>
+                  <span className="font-brand text-2xl font-semibold text-slate-800">{amount}</span>
+                  {categories.find((c) => c.id === categoryId) && (
+                    <span className="ml-2 text-sm text-slate-400">
+                      · {categories.find((c) => c.id === categoryId)?.name}
+                    </span>
+                  )}
+                </div>
+
                 {/* Date */}
                 <div>
                   <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-400">

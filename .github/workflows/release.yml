@@ -7,6 +7,7 @@ on:
 
 permissions:
   contents: write
+  id-token: write    # required for cosign OIDC signing
 
 jobs:
   release:
@@ -18,11 +19,12 @@ jobs:
         id: changelog
         env:
           TAG: ${{ github.ref_name }}
+          REPO: ${{ github.repository }}
         run: |
           VERSION="${TAG#v}"
           NOTES=$(awk "/^## \[$VERSION\]/{found=1; next} found && /^## \[/{exit} found{print}" CHANGELOG.md)
           if [ -z "$NOTES" ]; then
-            NOTES="See [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md) for details."
+            NOTES="See [CHANGELOG.md](https://github.com/${REPO}/blob/main/CHANGELOG.md) for details."
           fi
           echo "$NOTES" > release_notes.md
 
@@ -34,3 +36,69 @@ jobs:
           gh release create "$TAG" \
             --title "$TAG" \
             --notes-file release_notes.md
+
+  docker:
+    needs: release
+    runs-on: ubuntu-latest
+    outputs:
+      digest: ${{ steps.build.outputs.digest }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push
+        id: build
+        uses: docker/build-push-action@v6
+        with:
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/finansas:${{ github.ref_name }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/finansas:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  sign:
+    needs: docker
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install cosign
+        uses: sigstore/cosign-installer@v3
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Sign image with OIDC (keyless)
+        env:
+          DIGEST: ${{ needs.docker.outputs.digest }}
+          IMAGE: ${{ secrets.DOCKERHUB_USERNAME }}/finansas
+        run: |
+          cosign sign --yes "${IMAGE}@${DIGEST}"
+
+  hub-description:
+    needs: docker
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Update Docker Hub description
+        uses: peter-evans/dockerhub-description@v4
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          repository: ${{ secrets.DOCKERHUB_USERNAME }}/finansas
+          readme-filepath: ./README.md
