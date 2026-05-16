@@ -72,7 +72,13 @@ export function UserPageClient() {
 
   useEffect(() => {
     fetch('/api/profile/me')
-      .then((r) => (r.ok ? r.json() : null))
+      .then((r) => {
+        if (!r.ok) {
+          signOut({ callbackUrl: '/login' })
+          return null
+        }
+        return r.json()
+      })
       .then((data) => {
         if (data) {
           setProfile(data)
@@ -82,7 +88,7 @@ export function UserPageClient() {
         }
         setLoading(false)
       })
-      .catch(() => setLoading(false))
+      .catch(() => signOut({ callbackUrl: '/login' }))
   }, [])
 
   async function saveName() {

@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
+import { signOut } from 'next-auth/react'
 import { motion } from 'framer-motion'
 import { useInitialAnimation } from '@/hooks/use-initial-animation'
 import { ArrowUpRight, ArrowDownRight, Wallet, Target, TrendingUp } from 'lucide-react'
@@ -62,9 +63,13 @@ export default function DashboardPage() {
     setLoading(true)
     try {
       const res = await fetch('/api/summary')
-      if (res.ok) setSummary(await res.json())
+      if (res.ok) {
+        setSummary(await res.json())
+      } else {
+        signOut({ callbackUrl: '/login' })
+      }
     } catch {
-      // silently fail
+      signOut({ callbackUrl: '/login' })
     } finally {
       setLoading(false)
     }
@@ -79,7 +84,7 @@ export default function DashboardPage() {
 
   const accentColor = profileColor ?? '#6366f1'
 
-  if (loading || !summary) {
+  if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
         <div
@@ -89,6 +94,8 @@ export default function DashboardPage() {
       </div>
     )
   }
+
+  if (!summary) return null
 
   const isPositive = summary.balance >= 0
 
