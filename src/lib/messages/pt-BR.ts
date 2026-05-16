@@ -25,6 +25,7 @@ const messages = {
     creating: 'Criando…',
     error: 'Algo deu errado',
     accessDenied: 'Acesso negado',
+    comingSoon: 'Em breve',
   },
   admin: {
     title: 'Admin',

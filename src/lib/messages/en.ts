@@ -23,6 +23,7 @@ const messages = {
     creating: 'Creating…',
     error: 'Something went wrong',
     accessDenied: 'Access denied',
+    comingSoon: 'Coming soon',
   },
   admin: {
     title: 'Admin',
